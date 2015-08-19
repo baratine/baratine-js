@@ -8,7 +8,7 @@ performance web services that combine both data and logic in the same JVM.
  
 Given a service defined as 
   
-    package qa;
+    package example;
   
     import java.io.*;
     import io.baratine.core.*;

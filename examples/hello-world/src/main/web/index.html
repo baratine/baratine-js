@@ -1,0 +1,29 @@
+<!DOCTYPE>
+
+<html>
+
+<script src="baratine-js.js"></script>
+
+<script>
+  function execute()
+  {
+    var client = new Jamp.BaratineClient("http://localhost:8085/s/pod", true);
+
+    client.query("/hello-world", "hello", [], function (data)
+    {
+      var out = document.getElementById("output");
+
+      out.innerText = data;
+    });
+  }
+</script>
+
+<body style=" margin: auto; width: 60%; padding: 1em;">
+
+<form>
+  <input id="btn" name="btn" type="button" onclick="execute()"
+         value="Say Hello World"><span style="margin: auto; padding-left: 10em;"
+        id="output"></span>
+</form>
+</body>
+</html>
