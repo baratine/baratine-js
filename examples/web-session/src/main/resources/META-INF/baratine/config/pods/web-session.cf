@@ -1,0 +1,5 @@
+pod pod {
+  archive "/usr/lib/pods/web-session.bar";
+
+  web "/" "web";
+}

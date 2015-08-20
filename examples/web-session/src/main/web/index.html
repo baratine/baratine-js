@@ -1,0 +1,29 @@
+<!DOCTYPE>
+
+<html>
+
+<script src="baratine-js.js"></script>
+
+<script>
+  function registerListener()
+  {
+    var client = new Jamp.BaratineClient("ws://localhost:8085/s/pod");
+
+    var listener = client.createListener();
+
+    listener.onEvent = function (data)
+    {
+      var out = document.getElementById("output");
+
+      out.innerText = data;
+    };
+
+    client.query("/session", "registerListener", [listener]);
+  }
+</script>
+
+<body style="padding: 1em;" onload="registerListener()">
+
+Current Time: <span id="output" style="padding-left: 1em;"></span>
+</body>
+</html>
