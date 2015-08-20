@@ -38,7 +38,8 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${build.sourceDirectory}/../../main/web</outputDirectory>
+              <outputDirectory>${build.sourceDirectory}/../../main/web
+              </outputDirectory>
               <resources>
                 <resource>
                   <directory>${project.basedir}/../../dist</directory>
@@ -58,6 +59,9 @@
         <artifactId>baratine-plugin</artifactId>
         <version>1.0-SNAPSHOT</version>
         <extensions>true</extensions>
+        <configuration>
+          <buildExecutable>false</buildExecutable>
+        </configuration>
       </plugin>
     </plugins>
   </build>
