@@ -17,11 +17,11 @@ Given a service defined as
     @Service("public:///test")
     public class Test {
   
-      public String test(String value)
+      public void test(String value, Result<String> result)
       {
         TestState.addText("test(" + value + ")");
     
-        return "test[" + value + "]";
+        result.complete("test[" + value + "]");
       }
     
     }
