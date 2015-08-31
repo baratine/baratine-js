@@ -3,13 +3,11 @@ browser receive events generated on the server side.
 
 Note, that in this example communication takes place over websocket. 
 
-To run the example install maven-baratine-collection from 
-<https://github.com/baratine/maven-collection-baratine>
-
-Once the maven-collection-baratine is installed execute the command below from 
-examples/web-session directory.
-
-
+To run the example the below command from examples/web-session directory.
 
     mvn clean package baratine:run
     
+Once you see the console report completing the deployment navigate to 
+http://localhost:8085/index.html
+    
+Note: type exit <enter> to allow maven proceed with its tasks.

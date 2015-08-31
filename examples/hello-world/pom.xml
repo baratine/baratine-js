@@ -56,8 +56,8 @@
 
       <plugin>
         <groupId>io.baratine</groupId>
-        <artifactId>baratine-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <artifactId>baratine-maven-plugin</artifactId>
+        <version>0.10.1</version>
         <extensions>true</extensions>
         <configuration>
           <buildExecutable>false</buildExecutable>
