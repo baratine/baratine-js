@@ -3,8 +3,17 @@ Baratine Java Script Library
 
 Baratine-js is client library for invoking Baratine Services build using Baratine™. 
 
-Baratine is a new distributed in-memory Java service platform for building high 
-performance web services that combine both data and logic in the same JVM.
+Baratine™ is a Java platform providing a new approach for building web services. 
+
+A service is comprised of:
+
+  1. Data
+  2. Code
+  3. A thread
+  4. An API/Interface
+  
+The service-oriented model of Baratine simplifies creating and maintaining 
+high performance web services that are distributed by design.
  
 Given a service defined as 
   
