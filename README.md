@@ -30,8 +30,6 @@ Given a service defined as
   
       public void test(String value, Result<String> result)
       {
-        TestState.addText("test(" + value + ")");
-    
         result.complete("test[" + value + "]");
       }
     
@@ -39,12 +37,16 @@ Given a service defined as
 
 baratine-js can make calls to the service using
 
-    var client = new Jamp.BaratineClient("http://localhost:8086/s/pod");
+    var client = new Jamp.BaratineClient("http://localhost:8084/s/pod");
     
     client.query("/test", "test", ["foo"], function(data) {
-      console.log("success: " + data); // expect data === 'test[foo]'
+      console.log("success: " + data);
     });
-    
+
+The output would be:
+
+    success: test["foo"]
+
 
 Streaming
 ---------
