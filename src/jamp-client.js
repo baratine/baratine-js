@@ -50,6 +50,28 @@ Jamp.Client.prototype.onMessage = function (msg)
     var listener = this.getListener(msg.address);
     listener[msg.method].apply(listener, msg.parameters);
   }
+  else if (msg instanceof Jamp.StreamResultMessage) {
+    var queryId = msg.queryId;
+    var request = this.getRequest(queryId);
+
+    if (request != null) {
+      request.accept(this, msg.result);
+    }
+    else {
+      console.log("cannot find request for stream-result id: " + queryId);
+    }
+  }
+  else if (msg instanceof Jamp.StreamCompleteMessage) {
+    var queryId = msg.queryId;
+    var request = this.removeRequest(queryId);
+
+    if (request != null) {
+      request.completed(this, msg.result);
+    }
+    else {
+      console.log("cannot find request for stream-complete id: " + queryId);
+    }
+  }
   else {
     throw new Error("unexpected jamp message type: " + msg);
   }
@@ -87,6 +109,13 @@ Jamp.Client.prototype.removeRequest = function (queryId)
   var request = this.requestMap[queryId];
 
   delete this.requestMap[queryId];
+
+  return request;
+};
+
+Jamp.Client.prototype.getRequest = function (queryId)
+{
+  var request = this.requestMap[queryId];
 
   return request;
 };
@@ -160,6 +189,34 @@ Jamp.Client.prototype.query = function (service,
   this.submitRequest(request);
 };
 
+Jamp.Client.prototype.stream = function (service,
+                                         method,
+                                         args,
+                                         callback,
+                                         headerMap)
+{
+  var queryId = this.queryCount++;
+
+  var msg = new Jamp.StreamMessage(headerMap,
+                                   "/client",
+                                   queryId,
+                                   service,
+                                   method,
+                                   args);
+
+  if (msg.listeners !== undefined) {
+    for (var i = 0; i < msg.listeners.length; i++) {
+      var address = msg.listenerAddresses[i];
+      var listener = msg.listeners[i];
+      this.listenerMap[address] = listener;
+    }
+  }
+
+  var request = this.createStreamRequest(queryId, msg, callback);
+
+  this.submitRequest(request);
+};
+
 Jamp.Client.prototype.onfail = function (error)
 {
   console.log("error: " + JSON.stringify(error));
@@ -177,6 +234,17 @@ Jamp.Client.prototype.createQueryRequest = function (queryId, msg, callback)
 Jamp.Client.prototype.createSendRequest = function (queryId, msg)
 {
   var request = new Jamp.SendRequest(queryId, msg);
+
+  this.requestMap[queryId] = request;
+
+  return request;
+};
+
+Jamp.Client.prototype.createStreamRequest = function (queryId, msg, callback)
+{
+  var timeout = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 10);
+
+  var request = new Jamp.StreamRequest(queryId, msg, callback, timeout);
 
   this.requestMap[queryId] = request;
 
@@ -263,3 +331,37 @@ Jamp.QueryRequest = function (queryId, msg, callback, timeout)
   };
 };
 
+Jamp.StreamRequest = function (queryId, msg, callback, timeout)
+{
+  Jamp.Request.call(this, queryId, msg, timeout);
+
+  this.callback = callback;
+
+  this.accept = function (client, value)
+  {
+    if (this.callback !== undefined) {
+      callback(value);
+    }
+  };
+
+  this.completed = function (client)
+  {
+    client.removeRequest(this.queryId);
+
+    if (this.callback !== undefined && this.callback.oncomplete !== undefined) {
+      callback.oncomplete();
+    }
+  };
+
+  this.error = function (client, value)
+  {
+    client.removeRequest(this.queryId);
+
+    if (this.callback !== undefined && this.callback.onfail !== undefined) {
+      callback.onfail(value);
+    }
+    else {
+      console.log(value);
+    }
+  };
+};

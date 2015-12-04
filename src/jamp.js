@@ -104,6 +104,86 @@ Jamp.unserializeArray = function (array)
 
     return msg;
 
+  case "stream":
+    if (array.length < 6) {
+      throw new Error("incomplete message for JAMP type: " + type);
+    }
+
+    var headers = array[1];
+    var fromAddress = array[2];
+    var queryId = array[3];
+    var toAddress = array[4];
+    var methodName = array[5];
+
+    var args = null;
+
+    if (array.length > 6) {
+      args = new Array();
+
+      for (var i = 6; i < array.length; i++) {
+        args.push(array[i]);
+      }
+    }
+
+    var msg = new Jamp.StreamMessage(headers,
+                                     fromAddress,
+                                     queryId,
+                                     toAddress,
+                                     methodName,
+                                     args);
+
+    return msg;
+
+  case "stream-result":
+    if (array.length < 5) {
+      throw new Error("incomplete message for JAMP type: " + type);
+    }
+
+    var headers = array[1];
+    var fromAddress = array[2];
+    var queryId = array[3];
+    var result = array[4];
+
+    var msg = new Jamp.StreamResultMessage(headers, fromAddress, queryId, result);
+
+    return msg;
+  
+  case "stream-complete":
+    if (array.length < 4) {
+      throw new Error("incomplete message for JAMP type: " + type);
+    }
+
+    var headers = array[1];
+    var fromAddress = array[2];
+    var queryId = array[3];
+
+    var msg = new Jamp.StreamCompleteMessage(headers, fromAddress, queryId);
+
+    return msg;
+  
+  case "stream-error":
+    if (array.length < 4) {
+      throw new Error("incomplete message for JAMP type: " + type);
+    }
+
+    var headers = array[1];
+    var toAddress = array[2];
+    var queryId = array[3];
+    
+    if (array.length > 4) {
+      var resultArray = new Array();
+
+      for (var i = 4; i < array.length; i++) {
+        resultArray.push(array[i]);
+      }
+
+      result = resultArray;
+    }
+
+    var msg = new Jamp.ErrorMessage(headers, toAddress, queryId, result);
+
+    return msg;
+  
   default:
     throw new Error("unknown JAMP type: " + type);
   }
@@ -269,6 +349,76 @@ Jamp.ErrorMessage.prototype.serializeImpl = function (array)
   array.push(this.address);
   array.push(this.queryId);
   array.push(this.result);
+};
+
+Jamp.StreamMessage = function (headers,
+                               fromAddress,
+                               queryId,
+                               address,
+                               method,
+                               args)
+{
+  Jamp.QueryMessage.call(this, headers, fromAddress, queryId, address, method, args);
+};
+
+Jamp.StreamMessage.prototype = Object.create(Jamp.Message.prototype);
+
+Jamp.StreamMessage.prototype.serializeImpl = function (array)
+{
+  array.push("stream");
+  array.push(this.headers);
+  array.push(this.fromAddress);
+  array.push(this.queryId);
+  array.push(128);
+  array.push(this.address);
+  array.push(this.method);
+
+  if (this.args !== undefined) {
+    for (var i = 0; i < this.args.length; i++) {
+      array.push(this.args[i]);
+    }
+  }
+};
+
+Jamp.StreamMessage.prototype.addListener = Jamp.QueryMessage.prototype.addListener;
+
+Jamp.StreamResultMessage = function (headers, fromAddress, queryId, result)
+{
+  Jamp.Message.call(this, headers);
+
+  this.fromAddress = fromAddress;
+  this.queryId = queryId;
+
+  this.result = result;
+};
+
+Jamp.StreamResultMessage.prototype = Object.create(Jamp.Message.prototype);
+
+Jamp.StreamResultMessage.prototype.serializeImpl = function (array)
+{
+  array.push("stream-result");
+  array.push(this.headers);
+  array.push(this.fromAddress);
+  array.push(this.queryId);
+  array.push(this.result);
+};
+
+Jamp.StreamCompleteMessage = function (headers, fromAddress, queryId)
+{
+  Jamp.Message.call(this, headers);
+
+  this.fromAddress = fromAddress;
+  this.queryId = queryId;
+};
+
+Jamp.StreamCompleteMessage.prototype = Object.create(Jamp.Message.prototype);
+
+Jamp.StreamCompleteMessage.prototype.serializeImpl = function (array)
+{
+  array.push("stream-complete");
+  array.push(this.headers);
+  array.push(this.fromAddress);
+  array.push(this.queryId);
 };
 
 function handlerMaker(obj)

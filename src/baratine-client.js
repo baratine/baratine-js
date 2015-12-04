@@ -55,6 +55,27 @@ Jamp.BaratineClient.prototype.query = function (service,
 };
 
 /**
+ * Invokes a stream method on a Baratine service and expects a result.
+ *
+ * Should be used with methods that specify a return value via io.baratine.core.ResultStream.
+ *
+ * @param service - url of the service (value specified in @Service("/url")
+ * annotation on the service class.
+ * @param method – method to invoke e.g. 'test' for method defined as 'public void test(String in, ResultStream<String> result)'
+ * @param args – array of arguments to pass to the method e.g. ["hello world"]
+ * @param callback - method that accepts a reply e.g. function(data) {Console.log(data);}
+ * @param headers - optional headers
+ */
+Jamp.BaratineClient.prototype.stream = function (service,
+                                                 method,
+                                                 args,
+                                                 callback,
+                                                 headers)
+{
+  this.client.stream(service, method, args, callback, headers);
+};
+
+/**
  * Advanced: Used with child Baratine Services and returnes a Proxy to a remote
  * service which can be invoked using method names defined on the service.
  *

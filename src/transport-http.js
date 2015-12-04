@@ -31,7 +31,6 @@ Jamp.HttpTransport.prototype.submitRequest = function (request)
     }
 
     if (httpRequest.status == "200") {
-
       request.sent(client);
 
       transport.pull(client);
@@ -52,8 +51,9 @@ Jamp.HttpTransport.prototype.submitRequest = function (request)
 
 Jamp.HttpTransport.prototype.pull = function (client)
 {
-  if(this.isClosed)
+  if (this.isClosed) {
     return;
+  }
 
   var httpRequest = this.initPullRequest();
   this.pullRequest = httpRequest;
@@ -90,10 +90,10 @@ Jamp.HttpTransport.prototype.pull = function (client)
     transport.pullRequest = undefined;
   };
 
-  httpRequest.ontimeout = function ()
-  {
-    if (! transport.isClosed)
+  httpRequest.ontimeout = function () {
+    if (! transport.isClosed) {
       transport.pull(client);
+    }
   };
 };
 
