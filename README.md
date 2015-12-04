@@ -89,6 +89,13 @@ Then your JavaScript clients can stream from your service with:
     
     client.stream("/test", "helloStream", ["foo"], callback);
 
+The output would be:
+
+    received: hello foo
+    received: bye foo
+    completed
+
+
 Baratine Distribution
 ---------------------
 Latest distribution of Baratine can be obtained from <http://baratine.io>
