@@ -78,13 +78,13 @@ Jamp.HttpTransport.prototype.pull = function (client)
       transport.pull(client);
     }
     else {
-      console.log(this,
+      console.log(Jamp.formatLog(this,
                   "error submitting query "
                   + httpRequest.status
                   + " "
                   + httpRequest.statusText
                   + " : "
-                  + httpRequest.responseText);
+                  + httpRequest.responseText));
     }
 
     transport.pullRequest = undefined;

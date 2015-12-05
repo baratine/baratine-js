@@ -170,3 +170,8 @@ Jamp.ServiceListener = function ()
   return this;
 };
 
+Jamp.formatLog = function(msg)
+{
+  return new Date().toISOString() + ': ' + msg;
+};
+

@@ -170,6 +170,11 @@ Jamp.ServiceListener = function ()
   return this;
 };
 
+Jamp.formatLog = function(msg)
+{
+  return new Date().toISOString() + ': ' + msg;
+};
+
 Jamp.unserialize = function (json)
 {
   var array = JSON.parse(json);
@@ -751,7 +756,7 @@ Jamp.Client.prototype.onMessage = function (msg)
       request.completed(this, msg.result);
     }
     else {
-      console.log("cannot find request for query id: " + queryId);
+      console.log(Jamp.formatLog("cannot find request for query id: " + queryId));
     }
   }
   else if (msg instanceof Jamp.ErrorMessage) {
@@ -762,7 +767,7 @@ Jamp.Client.prototype.onMessage = function (msg)
       request.error(this, msg.result);
     }
     else {
-      console.log("cannot find request for query id: " + queryId);
+      console.log(Jamp.formatLog("cannot find request for query id: " + queryId));
     }
   }
   else if (msg instanceof Jamp.SendMessage) {
@@ -777,7 +782,7 @@ Jamp.Client.prototype.onMessage = function (msg)
       request.accept(this, msg.result);
     }
     else {
-      console.log("cannot find request for stream-result id: " + queryId);
+      console.log(Jamp.formatLog("cannot find request for stream-result id: " + queryId));
     }
   }
   else if (msg instanceof Jamp.StreamCompleteMessage) {
@@ -788,7 +793,7 @@ Jamp.Client.prototype.onMessage = function (msg)
       request.completed(this, msg.result);
     }
     else {
-      console.log("cannot find request for stream-complete id: " + queryId);
+      console.log(Jamp.formatLog("cannot find request for stream-complete id: " + queryId));
     }
   }
   else {
@@ -938,7 +943,7 @@ Jamp.Client.prototype.stream = function (service,
 
 Jamp.Client.prototype.onfail = function (error)
 {
-  console.log("error: " + JSON.stringify(error));
+  console.log(Jamp.formatLog("error: " + JSON.stringify(error)));
 };
 
 Jamp.Client.prototype.createQueryRequest = function (queryId, msg, callback)
@@ -1006,7 +1011,7 @@ Jamp.Request = function (queryId, msg, timeout)
 
   this.error = function (client, err)
   {
-    console.log(err);
+    console.log(formatLog(JSON.stringify(err)));
 
     client.removeRequest(this.queryId);
   };
@@ -1045,7 +1050,7 @@ Jamp.QueryRequest = function (queryId, msg, callback, timeout)
       callback.onfail(value);
     }
     else {
-      console.log(value);
+      console.log(Jamp.formatLog(JSON.stringify(value)));
     }
   };
 };
@@ -1080,7 +1085,7 @@ Jamp.StreamRequest = function (queryId, msg, callback, timeout)
       callback.onfail(value);
     }
     else {
-      console.log(value);
+      console.log(Jamp.formatLog(JSON.stringify(value)));
     }
   };
 };
@@ -1164,13 +1169,13 @@ Jamp.HttpTransport.prototype.pull = function (client)
       transport.pull(client);
     }
     else {
-      console.log(this,
+      console.log(Jamp.formatLog(this,
                   "error submitting query "
                   + httpRequest.status
                   + " "
                   + httpRequest.statusText
                   + " : "
-                  + httpRequest.responseText);
+                  + httpRequest.responseText));
     }
 
     transport.pullRequest = undefined;
@@ -1309,12 +1314,15 @@ Jamp.WsConnection.prototype.init = function (conn)
 
   conn.socket.onopen = function ()
   {
-    if (conn.client.onOpen !== undefined)
+    if (conn.client.onOpen !== undefined) {
       conn.client.onOpen();
+    }
 
     conn.isOpen = true;
 
     conn.reconnectIntervalMs = conn.initialReconnectInterval;
+
+    console.log(Jamp.formatLog('connected to: ' + conn.transport.url));
 
     conn.submitRequestLoop();
   };
@@ -1356,8 +1364,9 @@ Jamp.WsConnection.prototype.addRequest = function (data)
 
 Jamp.WsConnection.prototype.submitRequestLoop = function ()
 {
-  if (!this.isOpen)
+  if (! this.isOpen) {
     return;
+  }
 
   while (this.socket.readyState === WebSocket.OPEN
          && this.requestQueue.length > 0
@@ -1381,11 +1390,13 @@ Jamp.WsConnection.prototype.reconnect = function (conn)
 
   this.isClosing = false;
 
-  console.log("reconnecting in "
-              + (this.reconnectIntervalMs / 1000)
-              + " seconds");
+  console.log(Jamp.formatLog('reconnecting in '
+                             + (this.reconnectIntervalMs / 1000)
+                             + ' seconds'));
 
-  setTimeout(conn.init(conn), this.reconnectIntervalMs);
+  setTimeout(function() {
+    conn.init(conn);
+  }, this.reconnectIntervalMs);
 
   var interval = this.reconnectIntervalMs * this.reconnectDecay;
 

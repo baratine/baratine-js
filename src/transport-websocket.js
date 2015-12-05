@@ -83,12 +83,15 @@ Jamp.WsConnection.prototype.init = function (conn)
 
   conn.socket.onopen = function ()
   {
-    if (conn.client.onOpen !== undefined)
+    if (conn.client.onOpen !== undefined) {
       conn.client.onOpen();
+    }
 
     conn.isOpen = true;
 
     conn.reconnectIntervalMs = conn.initialReconnectInterval;
+
+    console.log(Jamp.formatLog('connected to: ' + conn.transport.url));
 
     conn.submitRequestLoop();
   };
@@ -130,8 +133,9 @@ Jamp.WsConnection.prototype.addRequest = function (data)
 
 Jamp.WsConnection.prototype.submitRequestLoop = function ()
 {
-  if (!this.isOpen)
+  if (! this.isOpen) {
     return;
+  }
 
   while (this.socket.readyState === WebSocket.OPEN
          && this.requestQueue.length > 0
@@ -155,11 +159,13 @@ Jamp.WsConnection.prototype.reconnect = function (conn)
 
   this.isClosing = false;
 
-  console.log("reconnecting in "
-              + (this.reconnectIntervalMs / 1000)
-              + " seconds");
+  console.log(Jamp.formatLog('reconnecting in '
+                             + (this.reconnectIntervalMs / 1000)
+                             + ' seconds'));
 
-  setTimeout(conn.init(conn), this.reconnectIntervalMs);
+  setTimeout(function() {
+    conn.init(conn);
+  }, this.reconnectIntervalMs);
 
   var interval = this.reconnectIntervalMs * this.reconnectDecay;
 
