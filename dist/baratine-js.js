@@ -1169,13 +1169,12 @@ Jamp.HttpTransport.prototype.pull = function (client)
       transport.pull(client);
     }
     else {
-      console.log(Jamp.formatLog(this,
-                  "error submitting query "
-                  + httpRequest.status
-                  + " "
-                  + httpRequest.statusText
-                  + " : "
-                  + httpRequest.responseText));
+      console.log(Jamp.formatLog("error submitting query "
+                                 + httpRequest.status
+                                 + " "
+                                 + httpRequest.statusText
+                                 + " : "
+                                 + httpRequest.responseText));
     }
 
     transport.pullRequest = undefined;
