@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.baratine</groupId>
+  <artifactId>baratine-js</artifactId>
+  <packaging>js</packaging>
+  <version>@VERSION@</version>
+
+  <name>Baratine Java Script Library</name>
+  <description>Baratine Java Script Library</description>
+  <url>https://github.com/baratine/baratine-js</url>
+
+  <licenses>
+    <license>
+      <name>GPLv3</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Caucho Technology</name>
+      <email>alex@caucho.com</email>
+      <organization>Caucho Technology</organization>
+      <organizationUrl>http://www.caucho.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/baratine/baratine-js.git</connection>
+    <developerConnection>scm:git:https://github.com/baratine/baratine-js.git</developerConnection>
+    <url>https://github.com/baratine/baratine-js.git</url>
+  </scm>
+</project>
+

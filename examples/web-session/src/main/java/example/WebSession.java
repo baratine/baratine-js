@@ -19,7 +19,7 @@ public class WebSession
   public void init()
   {
     _timerService
-      = ServiceManager.getCurrent().lookup("timer:///").as(TimerService.class);
+      = ServiceManager.current().lookup("timer:///").as(TimerService.class);
   }
 
   public void registerListener(@Service EventListener listener)
