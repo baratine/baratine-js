@@ -16,6 +16,7 @@
     <isset property="version"/>
   </condition>
 
+  <property name="ossrh-server-id" value="ossrh" />
 
   <property name="mvn.version" value="0.10.3-SNAPSHOT"/>
 
@@ -109,6 +110,5 @@
       </filterset>
     </copy>
   </target>
-
 
 </project>
